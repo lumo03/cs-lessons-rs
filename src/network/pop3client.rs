@@ -34,18 +34,18 @@ impl POP3Client {
     fn connect(&mut self) {
         println!("Attempting connection... ");
         let response = self.receive();
-        println!("RECEIVED: {}", response);
+        println!("RECEIVED: {response}");
     }
 
     fn login(&mut self) {
         println!("Sending login credentials...");
-        self.send(format!("USER {}\r\n", USERNAME));
+        self.send(format!("USER {USERNAME}\r\n"));
         let response = self.receive();
-        println!("RECEIVED: {}", response);
+        println!("RECEIVED: {response}");
 
-        self.send(format!("PASS {}\r\n", PASSWORD));
+        self.send(format!("PASS {PASSWORD}\r\n"));
         let response = self.receive();
-        println!("RECEIVED: {}", response);
+        println!("RECEIVED: {response}");
 
         if !response.starts_with("+OK") {
             println!("Login error");
@@ -61,11 +61,11 @@ impl POP3Client {
             println!("Error retrieving email list");
             std::process::exit(1);
         }
-        println!("{}", response);
+        println!("{response}");
     }
 
     fn get_mail(&mut self, id: i32) {
-        println!("Retrieving email with id {}...", id);
+        println!("Retrieving email with id {id}...");
     }
 
     fn close_connection(&mut self) {
@@ -82,9 +82,10 @@ impl POP3Client {
 
     fn receive(&mut self) -> String {
         let mut response = String::new();
-        let bytes_read = self.reader.read_line(&mut response).unwrap();
-        response = response.trim_start_matches("\r").to_string();
-        println!("Bytes read: {}", bytes_read);
+        // let bytes_read = self.reader.read_line(&mut response).unwrap();
+        let _ = self.reader.read_line(&mut response).unwrap();
+        response = response.trim_start_matches('\r').to_string();
+        // println!("Bytes read: {}", bytes_read);
         response
     }
 
