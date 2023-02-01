@@ -26,7 +26,7 @@ impl POP3Client {
 
         client.connect();
         client.login();
-        client.liste_mails();
+        client.list_mails();
         client.close_connection();
         client
     }
@@ -53,7 +53,7 @@ impl POP3Client {
         }
     }
 
-    fn liste_mails(&mut self) {
+    fn list_mails(&mut self) {
         println!("Retrieving email list...");
         self.send("LIST\r\n".to_string());
         let response = self.receive();
