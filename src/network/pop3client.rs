@@ -1,7 +1,7 @@
-use std::io::{self, Write, BufRead};
+use std::io::{self, BufRead, Write};
 use std::net::TcpStream;
 
-const SERVER: &str = "192.168.178.25";
+const SERVER: &str = "10.2.126.105";
 const PORT: u16 = 10110;
 const USERNAME: &str = "anna";
 const PASSWORD: &str = "geheim";
@@ -14,7 +14,7 @@ pub struct POP3Client {
 
 impl POP3Client {
     pub fn new() -> Self {
-      let socket = TcpStream::connect((SERVER, PORT)).unwrap();
+        let socket = TcpStream::connect((SERVER, PORT)).unwrap();
         let reader = io::BufReader::new(socket.try_clone().unwrap());
         let writer = io::BufWriter::new(socket.try_clone().unwrap());
 
@@ -23,7 +23,7 @@ impl POP3Client {
             reader,
             writer,
         };
-      
+
         client.connect();
         client.login();
         client.liste_mails();
@@ -81,11 +81,12 @@ impl POP3Client {
     }*/
 
     fn receive(&mut self) -> String {
-      let mut response = String::new();
-      let bytes_read = self.reader.read_line(&mut response).unwrap();
-      println!("Bytes read: {}", bytes_read);
-      response
-  }
+        let mut response = String::new();
+        let bytes_read = self.reader.read_line(&mut response).unwrap();
+        response = response.trim_start_matches("\r").to_string();
+        println!("Bytes read: {}", bytes_read);
+        response
+    }
 
     fn send(&mut self, message: String) {
         let _ = self.writer.write(message.as_bytes()).unwrap();
