@@ -56,15 +56,42 @@ impl POP3Client {
     fn list_mails(&mut self) {
         println!("Retrieving email list...");
         self.send("LIST\r\n".to_string());
-        let response = self.receive();
+        let mut response = self.receive();
         if response.starts_with("-ERR") {
             println!("Error retrieving email list");
             std::process::exit(1);
         }
         println!("{response}");
+        let mut idList: Vec<u32> = Vec::new();
+
+        loop {
+           response  = self.receive();
+
+            if response == "" {
+                // start next iteration
+                continue;
+            } else if response == "." {
+                // break loop
+                break;
+            }
+
+            // Wir bekommen eine Zeile der Form "15 45378437"
+            let id_string = response.split(" ").next().unwrap();
+            let id = id_string.parse::<u32>().unwrap();
+            idList.push(id);
+
+            println!("RECEIVED: {response}");
+        }
+
+        // SAFE
+        println!("IDs: {:?}", idList);
+
+        for id in idList {
+            self.get_mail(id);
+        }
     }
 
-    fn get_mail(&mut self, id: i32) {
+    fn get_mail(&mut self, id: u32) {
         println!("Retrieving email with id {id}...");
     }
 
@@ -78,7 +105,7 @@ impl POP3Client {
         let mut response = String::new();
         // let bytes_read = self.reader.read_line(&mut response).unwrap();
         let _ = self.reader.read_line(&mut response).unwrap();
-        response = response.trim_start_matches('\r').to_string();
+        response = response.trim_start_matches('\r').trim().to_string();
         // println!("Bytes read: {}", bytes_read);
         response
     }
