@@ -73,12 +73,6 @@ impl POP3Client {
         self.socket.shutdown(std::net::Shutdown::Both).unwrap();
         println!("Goodbye!");
     }
-    /*
-    fn receive(&mut self) -> String {
-        let mut response = String::new();
-        self.reader.read_line(&mut response).unwrap();
-        response
-    }*/
 
     fn receive(&mut self) -> String {
         let mut response = String::new();
